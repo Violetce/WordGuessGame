@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en=us">
+
+<head>
+    <meta charset="UTF-8">
+    <title>All About Morgan Kennedy</title>
+    <!-- <link rel="stylesheet" type="text/css" href="assets/css/style.css"> -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Added a link to Bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+
+<body>
+    <header>
+        
+        <!-- <ul>
+        <li><a href="index.html">About</a></li>
+        <li><a href="portfolio.html">Portfolio</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul> -->
+    </header>
+
+    <div class="container bg-white border">
+        <div class="row p-4 border-bottom text-info">
+            <h1 class="title">Sporthorse Guesser!</h1>
+        </div>
+        <div class="row p-4 border-bottom text-info">
+            <div class="col-md-8">
+                <p>That darn horse will not let you catch him! No amount of carrots will lure him your way. I guess those sporthorses are just too fast for measly human legs!
+                <br><br>
+                Guess his breed before he gets too far away to catch him!
+                <br><br>
+                Only sporthorse breeds are included - so warmblood breeds and thoroughbreds. 
+                <br><br>
+                Press any key to get started.</p>
+            </div>
+            <div class="col-md-4">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2F6nLF3LNzNap7AkCWMZJqo6qzhg_TweJOZgZPI12m8vJpHN7SQ">
+            </div>
+        </div>
+        <div class="row p-4 border-bottom text-info">
+            <div class="col-md-4">
+                <h4>Current Word</h4>
+            </div>
+            <div class="col-md-8">
+                <p id="changingGuess"></p>
+            </div>
+        </div>
+        <div class="row p-4 border-bottom text-info">
+            <div class="col-md-4">
+                <h4>Guesses Remaining</h4>
+            </div>
+            <div class="col-md-8">
+                <p id="guessesRemaining"></p>
+            </div>
+        </div>
+        <div class="row p-4 border-bottom text-info">
+            <div class="col-md-4">
+                <h4>Letters Guessed</h4>
+            </div>
+            <div class="col-md-8">
+                <p id="lettersGuessed"></p>
+            </div>
+        </div>
+        <div class="row p-4 border-bottom text-info">
+            <div class="col-md-4">
+                <h4>Wins</h4>
+            </div>
+            <div class="col-md-8">
+                <p id="wins"></p>
+            </div>
+        </div>
+        <div class="row p-4 border-bottom text-info">
+            <div class="col-md-4">
+                <h4>Losses</h4>
+            </div>
+            <div class="col-md-8">
+                <p id="losses"></p>
+            </div>
+        </div>
+    </div>
+    <div class="container bg-white border">
+        
+    </div>
+
+    <script type="text/javascript">
+
+        // possible hangman words
+        var possibleAnswers = ["westfalen", "rheinlander", "dutch warmblood", "holsteiner", "hannoverian", "thoroughbred", "trakhener"];
+
+        // defines number of hangman games should be looped through before finally letting user go
+        var loops = 100;
+
+        // defines wins and losses
+        var wins = 0;
+        var losses = 0;
+        $("#wins").text(wins);
+        $("#losses").text(losses);
+
+        var count = 10;
+
+
+        //update currentAnswer on screen
+        var previousGuesses = [];
+        var finalAnswer = [];
+        var finalCorrect = [];
+        var e = 0;
+        var correctAnswer = [];
+        var currentAnswer = [];
+        var nextGuess = [];
+        var possibleIndex = Math.floor(Math.random() * possibleAnswers.length); // random selection of which possible hangman word will be used as the correct answer
+        var indexAnswer = possibleAnswers[possibleIndex];
+
+        // create an array for the correct answer/convert the string to an array
+        for (var c = 0; c < indexAnswer.length; c++) {
+            correctAnswer.push(indexAnswer[c]);
+        }
+        for (var a = 0; a < correctAnswer.length; a++) {
+            currentAnswer.push("_");
+        }
+
+        $("#changingGuess").text(currentAnswer);
+
+        document.onkeyup = function (event) {
+
+            
+            if (e < count) {
+                e = e + 1;
+                nextGuess = event.key;
+                previousGuesses.push(nextGuess);
+
+                // loop through the correctAnswer and if the nextGuess matches any letter, put it correctly located into currentAnswer
+                for (var b = 0; b < correctAnswer.length; b++) {
+                    if (nextGuess === correctAnswer[b]) {
+                        currentAnswer[b] = correctAnswer[b];
+                        //only calling when if statement is hit, so when a matching letter is found
+                    }
+                }
+                // it is not updating the currentAnswer -- need to figure out how to update this
+                //update the user with their currentAnswer and their previousGuesses
+                $("#changingGuess").text(currentAnswer);
+                // guesses left, letters already guessed
+                $("#lettersGuessed").text(previousGuesses);
+                $("#guessesRemaining").text(count - e);
+
+                //for an exit from the for loop: 
+                //convert answer arrays to strings so they can be directly compared
+                finalAnswer = currentAnswer.toString();
+                finalCorrect = correctAnswer.toString();
+
+                // then compare answer strings, and end the loop if the correct answer has been found
+                if (finalAnswer === finalCorrect) {
+                    e = count; // an exit from the loop if you get the word before your possible guesses are out
+                    $("#guessesRemaining").text(count - e);
+                }
+            }
+
+            console.log(e);
+
+            if (e === count) { // here is your current problem - this loop is not being picked up
+                console.log("e = count");
+                if (finalAnswer === finalCorrect) {
+                    alert("You saved him!! Well done!");
+                    wins = wins + 1;
+                }
+                else {
+                    alert("Oh no! He hung!!");
+                    losses = losses + 1;
+                }
+                $("#wins").text(wins);
+                $("#losses").text(losses);
+                
+            }
+        }
+
+
+
+    </script>
+
+</body>
+
+</html>
